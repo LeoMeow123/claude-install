@@ -52,10 +52,16 @@ git config --global user.email "y9li@ucsd.edu"
 
 # Set up gh credential helper if gh is available
 if command -v gh &>/dev/null; then
-    git config --global credential.https://github.com.helper ""
-    git config --global credential.https://github.com.helper "!/usr/bin/gh auth git-credential"
-    git config --global credential.https://gist.github.com.helper ""
-    git config --global credential.https://gist.github.com.helper "!/usr/bin/gh auth git-credential"
+    # Clear any existing helpers (handles single- or multi-valued keys), then add ours.
+    # The empty-string first entry resets inherited system/global helpers.
+    git config --global --unset-all credential.https://github.com.helper 2>/dev/null || true
+    git config --global --add credential.https://github.com.helper ""
+    git config --global --add credential.https://github.com.helper "!/usr/bin/gh auth git-credential"
+
+    git config --global --unset-all credential.https://gist.github.com.helper 2>/dev/null || true
+    git config --global --add credential.https://gist.github.com.helper ""
+    git config --global --add credential.https://gist.github.com.helper "!/usr/bin/gh auth git-credential"
+
     echo "  Git identity and GitHub credential helper configured."
 else
     echo "  Git identity configured. (Install gh CLI separately for credential helper)"
