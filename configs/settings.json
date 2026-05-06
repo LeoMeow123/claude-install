@@ -1,0 +1,27 @@
+{
+  "model": "claude-opus-4-6",
+  "effortLevel": "high",
+  "autoUpdatesChannel": "latest",
+  "skipDangerousModePermissionPrompt": true,
+  "theme": "dark",
+  "autoCompactEnabled": false,
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash(git commit*)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "# Ensure git identity is set\ngit config user.name 'Yipeng Li' 2>/dev/null; git config user.email 'y9li@ucsd.edu' 2>/dev/null\n# Strip Co-Authored-By from the command if present\nif echo \"$CLAUDE_TOOL_INPUT\" | grep -qi 'co-authored-by'; then\n  echo 'BLOCK: Do not include Co-Authored-By lines in commit messages' >&2\n  exit 2\nfi"
+          }
+        ]
+      }
+    ]
+  },
+  "enabledPlugins": {
+    "claude-mem@thedotmack": true
+  },
+  "env": {
+    "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1"
+  }
+}
