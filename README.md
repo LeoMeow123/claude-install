@@ -6,6 +6,7 @@ Automated setup for my Claude Code environment. Run one script to get a fully co
 
 | Component | Description |
 |-----------|-------------|
+| **Zellij** | Terminal multiplexer with custom navy-blue theme and vim/tmux keybinds |
 | **Node.js 22** | Installed via nvm (required by claude-mem) |
 | **Git identity** | `Yipeng Li <y9li@ucsd.edu>` + GitHub credential helper |
 | **Claude Code settings** | Model (Opus 4.6), theme, effort level, permissions |
@@ -42,12 +43,13 @@ The script will install everything else automatically (nvm, Node.js, Claude Code
 
 ```
 install.sh
-├── [1] Install nvm + Node.js 22 (skips if already present)
-├── [2] Configure git identity (name, email, credential helper)
-├── [3] Install Claude Code CLI (skips if already present)
-├── [4] Deploy settings.json + memory files to ~/.claude/
-├── [5] Install claude-mem plugin
-└── [6] Start claude-mem worker service
+├── [1] Install zellij + deploy config (skips install if already present)
+├── [2] Install nvm + Node.js 22 (skips if already present)
+├── [3] Configure git identity (name, email, credential helper)
+├── [4] Install Claude Code CLI (skips if already present)
+├── [5] Deploy settings.json + memory files to ~/.claude/
+├── [6] Install claude-mem plugin
+└── [7] Start claude-mem worker service
 ```
 
 ## File Structure
@@ -58,6 +60,8 @@ claude-install/
 ├── README.md                         # This file
 └── configs/
     ├── settings.json                 # Claude Code settings + hooks
+    ├── zellij/
+    │   └── config.kdl                # Zellij terminal multiplexer config
     ├── claude-mem/
     │   └── settings.json             # claude-mem plugin configuration
     └── memory/
@@ -66,6 +70,13 @@ claude-install/
 ```
 
 ## Configuration Details
+
+### Zellij (`configs/zellij/config.kdl`)
+
+- **Theme**: `navy-blue` (custom dark theme)
+- **Keybinds**: `clear-defaults=true` with vim-style navigation (hjkl)
+- **Tmux compatibility**: `Ctrl b` prefix mode with familiar tmux bindings
+- **Modes**: pane, tab, resize, move, scroll, search, session management
 
 ### Claude Code Settings (`configs/settings.json`)
 
@@ -95,6 +106,7 @@ When you change settings on your main machine:
 
 ```bash
 # Copy updated configs back to the repo
+cp ~/.config/zellij/config.kdl configs/zellij/config.kdl
 cp ~/.claude/settings.json configs/settings.json
 cp ~/.claude-mem/settings.json configs/claude-mem/settings.json
 
