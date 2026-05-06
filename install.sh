@@ -10,8 +10,23 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 echo "=== Claude Code Environment Setup ==="
 echo ""
 
-# --- 1. Install nvm + Node 22 ---
-echo "[1/6] Installing nvm and Node.js 22..."
+# --- 1. Install zellij ---
+echo "[1/7] Installing zellij..."
+if command -v zellij &>/dev/null; then
+    echo "  zellij already installed ($(zellij --version))."
+else
+    echo "  Installing zellij..."
+    bash <(curl -L zellij.dev/launch)
+fi
+
+# Deploy zellij config
+mkdir -p "$HOME/.config/zellij"
+cp "$SCRIPT_DIR/configs/zellij/config.kdl" "$HOME/.config/zellij/config.kdl"
+echo "  zellij config deployed."
+echo ""
+
+# --- 2. Install nvm + Node 22 ---
+echo "[2/7] Installing nvm and Node.js 22..."
 if [ -s "$HOME/.nvm/nvm.sh" ]; then
     echo "  nvm already installed, skipping."
 else
@@ -30,8 +45,8 @@ fi
 echo "  Node $(node --version) ready."
 echo ""
 
-# --- 2. Git identity ---
-echo "[2/6] Configuring git identity..."
+# --- 3. Git identity ---
+echo "[3/7] Configuring git identity..."
 git config --global user.name "Yipeng Li"
 git config --global user.email "y9li@ucsd.edu"
 
@@ -47,8 +62,8 @@ else
 fi
 echo ""
 
-# --- 3. Install Claude Code (if not installed) ---
-echo "[3/6] Checking Claude Code..."
+# --- 4. Install Claude Code (if not installed) ---
+echo "[4/7] Checking Claude Code..."
 if command -v claude &>/dev/null; then
     echo "  Claude Code already installed."
 else
@@ -57,8 +72,8 @@ else
 fi
 echo ""
 
-# --- 4. Deploy Claude Code settings ---
-echo "[4/6] Deploying Claude Code settings..."
+# --- 5. Deploy Claude Code settings ---
+echo "[5/7] Deploying Claude Code settings..."
 mkdir -p "$HOME/.claude"
 
 cp "$SCRIPT_DIR/configs/settings.json" "$HOME/.claude/settings.json"
@@ -72,8 +87,8 @@ cp "$SCRIPT_DIR/configs/memory/feedback_git_identity.md" "$MEMORY_DIR/feedback_g
 echo "  Memory files deployed."
 echo ""
 
-# --- 5. Install claude-mem ---
-echo "[5/6] Installing claude-mem..."
+# --- 6. Install claude-mem ---
+echo "[6/7] Installing claude-mem..."
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
 
@@ -89,14 +104,15 @@ sed -i "s|/home/exx|$HOME|g" "$HOME/.claude-mem/settings.json"
 echo "  claude-mem settings deployed."
 echo ""
 
-# --- 6. Start claude-mem worker ---
-echo "[6/6] Starting claude-mem worker..."
+# --- 7. Start claude-mem worker ---
+echo "[7/7] Starting claude-mem worker..."
 npx claude-mem start || echo "  (Worker may need manual start after restarting terminal)"
 echo ""
 
 echo "=== Setup Complete ==="
 echo ""
 echo "Summary:"
+echo "  - Zellij: installed with custom config"
 echo "  - Node.js $(node --version) via nvm"
 echo "  - Git: Yipeng Li <y9li@ucsd.edu>"
 echo "  - Claude Code: settings + hooks deployed"
